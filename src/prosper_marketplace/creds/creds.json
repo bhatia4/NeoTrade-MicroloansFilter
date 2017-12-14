@@ -1,0 +1,6 @@
+{
+	"clientID":		"Your clientID",
+  	"clientSecret":		"Your secret",
+  	"username":		"Your prosper.com ID",
+  	"password":		"Your prosper.com password"
+}
