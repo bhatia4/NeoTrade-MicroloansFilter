@@ -1,6 +1,8 @@
 {
-	"clientID":		"Your clientID",
-  	"clientSecret":		"Your secret",
-  	"username":		"Your prosper.com ID",
-  	"password":		"Your prosper.com password"
+	"prosperClientID":		"Your prosper.com clientID",
+  	"prosperClientSecret":	"Your prosper.com secret",
+  	"prosperUsername":		"Your prosper.com ID",
+  	"prosperPassword":		"Your prosper.com password",
+	"twilioSid":			"Your twilio.com account or test sid",
+  	"twilioToken":			"Your twilio.com account or test token"
 }

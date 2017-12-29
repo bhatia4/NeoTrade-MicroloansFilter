@@ -6,17 +6,22 @@ import (
   "io/ioutil"
   "os"
   "log"
+  "strings"
+  "strconv"
   "encoding/json"
   "github.com/bhatia4/gofn-prosper/prosper"
   "github.com/bhatia4/gofn-prosper/prosper/auth"
   "github.com/bhatia4/gofn-prosper/interval"
+  "github.com/sfreiberg/gotwilio"
 )
 
-type ProsperCreds struct {
-    ClientID		string `json:"clientID"`
-    ClientSecret	string `json:"clientSecret"`
-    Username		string `json:"username"`
-    Password		string `json:"password"`
+type ProsperAndTwilioCreds struct {
+    ProsperClientID		string `json:"prosperClientID"`
+    ProsperClientSecret	string `json:"prosperClientSecret"`
+    ProsperUsername		string `json:"prosperUsername"`
+    ProsperPassword		string `json:"prosperPassword"`
+	TwilioSid 			string `json:"twilioSid"`
+  	TwilioToken 		string `json:"twilioToken"`
 }
 
 type Filter struct {
@@ -92,21 +97,30 @@ func main() {
 	Init(ioutil.Discard /*when testing, replace w/ os.Stdout*/, 
 			os.Stdout, os.Stdout, os.Stderr)
 	
+	//check if arguments provided
+	Trace.Printf("%+v\n", os.Args)
+	if len(os.Args)<3+1 {
+		Error.Println("Invalid number of command-line arguments. Please provide the following arguments (in order): \"path_to_creds.json\" \"path_to_filter\" \"incoming_phone_number_for_sms\"")
+		os.Exit(1)
+	}
+	
 	//read creds json file
-	var creds ProsperCreds
+	var creds ProsperAndTwilioCreds
     json.Unmarshal(readFromFile(os.Args[1]), &creds)
-
+	Trace.Printf("%+v\n", creds)
+	
 	//read filter json file
 	var currFilter Filter
     json.Unmarshal(readFromFile(os.Args[2]), &currFilter)
-
-	Info.Printf("%+v\n", currFilter)
+	Trace.Printf("%+v\n", currFilter)
+	
+	var smsFromPhoneNumber = os.Args[3]
 	
 	client := prosper.NewClient(auth.ClientCredentials{
-  		ClientID:     creds.ClientID,
-  		ClientSecret: creds.ClientSecret,
-  		Username:     creds.Username,
-  		Password:     creds.Password,
+  		ClientID:     creds.ProsperClientID,
+  		ClientSecret: creds.ProsperClientSecret,
+  		Username:     creds.ProsperUsername,
+  		Password:     creds.ProsperPassword,
 	})
 	account, err := client.Account(prosper.AccountParams{})
 	if err != nil {
@@ -179,7 +193,10 @@ func main() {
 	Info.Printf("Found %d matching notes, processing first %d\n",
   		searchResp.TotalCount, searchResp.ResultCount)
 
+	var listingNumbers []string = make([]string, searchResp.ResultCount);
 	for i, listing := range searchResp.Results {
+		listingNumbers[i] = strconv.Itoa(int(listing.ListingNumber))
+		
 		Info.Printf("%2d: ID:%v; Rating:%s; Status:%s; Amount:$%5.0f; Listed on:%s; Delinquencies last 7yrs:%d; Est Return:%.2f%%; Term:%d; Income Range:%d (%s); Last 6 mos. Inquiries:%d; Debt-to-Income Ratio:%.2f%%; Prior Prosper Loans(Late Payments 1 mo+:%d; Bal. Outstanding:%.2f)\n",
 				i+1, 
 				listing.ListingNumber, 
@@ -197,4 +214,26 @@ func main() {
 				listing.PriorProsperLoansLatePaymentsOneMonthPlus,
 				listing.PriorProsperLoansBalanceOutstanding,)
 	}
+	
+	if len(listingNumbers) > 0 {
+		smsTheList(creds, listingNumbers, currFilter.ShortDesc, smsFromPhoneNumber, "+12488826908")
+	}
+}
+
+func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, shortDesc string, fromPhoneNum string, toPhoneNum string) {
+	var sid = creds.TwilioSid //"AC64622019f2045f0b247532ad3f6ebec9" //TEST SID "AC8b8fc89502dbb2d270c6789706ab0af1"
+	var token = creds.TwilioToken //"b8aa10357d28be34489b203d41694259" //TEST TOKEN "15ac6fc7f43c15626ed229a46cc2a3c6"
+	var fromPhoneNumInput = fromPhoneNum //"+12483284008"//TEST FROM PHONENUM "+15005550006"
+	var mesg string = "NeoTrade-Microloans Filter: Found loans (" + strings.Join(listingNumbers,", ") + ") using filter (" + shortDesc + ")"
+	
+	// Send sms message
+	twilioClient := gotwilio.NewTwilioClient(sid, token)
+	_, exc, err := twilioClient.SendSMS(fromPhoneNumInput, toPhoneNum, mesg, "", "")
+	if err != nil {
+		Error.Printf("Failed to send sms: %v\n", err)
+	}
+	if exc != nil {
+		Error.Printf("Excetion when sending sms: %v\n", exc)
+	}
+	Info.Println("SMS sent >> "+mesg)
 }
