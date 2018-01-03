@@ -1,6 +1,6 @@
 {
-	"shortDesc":"TypeA1: A Rate, high inc. appl, min 4.55% return; last 5 days",
-	"longDesc":"A Rate, high inc. appl, min 4.55% return; last 5 days",
+	"shortDesc":"TypeA1: A Rate, high inc. appl, min 4.75% return",
+	"longDesc":"A Rate, high inc. appl, min 4.75% returns",
 	"dtiWprosperLoan":
 	{
 		"min":0.0, 
@@ -8,7 +8,7 @@
 	},
 	"estimatedReturn":
 	{
-		"min":0.0455, 
+		"min":0.0475, 
 		"max":0.2
 	},
 	"incomeRange":[5, 6], "incomeRangeComments":["prosper.Between75kAnd100k", "prosper.Over100k"],

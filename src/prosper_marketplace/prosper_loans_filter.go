@@ -59,6 +59,8 @@ var (
     Error   *log.Logger
 )
 
+const shortDescMaxLen int = 50
+
 func Init(
     traceHandle io.Writer,
     infoHandle io.Writer,
@@ -224,7 +226,12 @@ func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, shortDesc 
 	var sid = creds.TwilioSid //"AC64622019f2045f0b247532ad3f6ebec9" //TEST SID "AC8b8fc89502dbb2d270c6789706ab0af1"
 	var token = creds.TwilioToken //"b8aa10357d28be34489b203d41694259" //TEST TOKEN "15ac6fc7f43c15626ed229a46cc2a3c6"
 	var fromPhoneNumInput = fromPhoneNum //"+12483284008"//TEST FROM PHONENUM "+15005550006"
-	var mesg string = "NeoTrade-Microloans Filter: Found loans (" + strings.Join(listingNumbers,", ") + ") using filter (" + shortDesc + ")"
+	var shortDescVar = shortDesc
+	if len(shortDescVar) > shortDescMaxLen {
+		shortDescVar = shortDesc[0:shortDescMaxLen] + "..." /*Golang doesnt have substring. Instead I designate string as an array and use slicing (I slice shortDesc to only extract chars from position to 0 to 50)*/
+	}
+	
+	var mesg string = "NeoTrade-Microloans: Loans(" + strings.Join(listingNumbers,", ") + "), Filter(" + shortDescVar + ")"
 	
 	// Send sms message
 	twilioClient := gotwilio.NewTwilioClient(sid, token)
