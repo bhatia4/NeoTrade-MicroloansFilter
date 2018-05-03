@@ -1,6 +1,6 @@
 # NeoTrade-MicroloansFilter
 Batch code written in Golang which uses Prosper API to find microloans that match loan criteria.
-(For Prosper API I use bhatia4/gofn-prosper (https://github.com/bhatia4/gofn-prosper) which is modified fork from mtlynch/gofn-prosper
+For Prosper API I use bhatia4/gofn-prosper (https://github.com/bhatia4/gofn-prosper) which is modified fork from mtlynch/gofn-prosper
 
 It also uses Twilio API to send  text messages on loans found.
 
