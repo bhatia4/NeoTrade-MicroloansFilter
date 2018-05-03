@@ -1,14 +1,14 @@
 package main
 
 import (
-  "time"
+  "time" //displaying dates as well as manipulating date/time objects
   "io"
   "io/ioutil"
-  "os"
+  "os" //for operating system functionality such as accessing command line arguments and outputing to standard error file descriptors etc.
   "log"
   "strings"
-  "strconv"
-  "encoding/json"
+  "strconv" //used only to code integer to string object conversions
+  "encoding/json" //to implement unmarshalling of JSON data
   "github.com/bhatia4/gofn-prosper/prosper"
   "github.com/bhatia4/gofn-prosper/prosper/auth"
   "github.com/bhatia4/gofn-prosper/interval"
@@ -39,7 +39,7 @@ type Filter struct {
 }
 
 type MyFloat64Range interval.Float64Range
-func (o *MyFloat64Range) UnmarshalJSON(data []byte) error {
+func (o *MyFloat64Range) UnmarshalJSON(data []byte) error { //implemented UnmarshalJSON in order to deserialize custom type objects from JSON
 	Trace.Printf("%s\n", data)
 	var v [2]float64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -61,6 +61,7 @@ var (
 
 const shortDescMaxLen int = 50
 
+//initialized logger, based on code impl given by https://www.ardanlabs.com/blog/2013/11/using-log-package-in-go.html
 func Init(
     traceHandle io.Writer,
     infoHandle io.Writer,
@@ -205,6 +206,7 @@ func main() {
 				prosper.RatingToString(listing.Rating),
 				listing.ListingStatusReason,
 				listing.ListingAmount,
+/*Format and Parse use example-based layouts. Usually you’ll use a constant from time for these layouts. Layouts must use the reference time Mon Jan 2 15:04:05 MST 2006 to show the pattern with which to format/parse a given time/string. The example time must be exactly as shown: the year 2006, 15 for the hour, Monday for the day of the week, etc. In this case I want the date format like so ("2/Jan/06")*/
 				listing.ListingStartDate.Format("2/Jan/06"),
 				listing.DelinquenciesLast7Years,
 				listing.EstimatedReturn*100.0,
@@ -222,6 +224,7 @@ func main() {
 	}
 }
 
+//function uses Twilio API to send text messages on loans found
 func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, shortDesc string, fromPhoneNum string, toPhoneNum string) {
 	var sid = creds.TwilioSid //"AC64622019f2045f0b247532ad3f6ebec9" //TEST SID "AC8b8fc89502dbb2d270c6789706ab0af1"
 	var token = creds.TwilioToken //"b8aa10357d28be34489b203d41694259" //TEST TOKEN "15ac6fc7f43c15626ed229a46cc2a3c6"
