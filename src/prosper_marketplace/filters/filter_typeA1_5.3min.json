@@ -1,0 +1,21 @@
+{
+	"shortDesc":"TypeA1: A Rate, high inc. appl, min 5.3% return",
+	"longDesc":"A Rate, high inc. appl, min 5.3% returns",
+	"dtiWprosperLoan":
+	{
+		"min":0.0, 
+		"max":0.35
+	},
+	"estimatedReturn":
+	{
+		"min":0.053, 
+		"max":0.2
+	},
+	"incomeRange":[5, 6], "incomeRangeComments":["prosper.Between75kAnd100k", "prosper.Over100k"],
+	"limit":20,
+	"daysFromCurrentTime":5,
+	"listingStatus":[2], "listingStatusComments":["prosper.ListingActive"],
+	"listingTerm":[60], "listingTermComments":["prosper.ListingTerm60Months"],
+	"offset":0,
+	"rating":["A"], "ratingComments":["prosper.RatingA"]
+}

@@ -1,0 +1,21 @@
+{
+	"shortDesc":"TypeC1: C Rate, low debt-to-inc, high inc. appl, min 8.501% return",
+	"longDesc":"C Rate, low debt-to-inc, high inc. appl, min 8.501% return",
+	"dtiWprosperLoan":
+	{
+		"min":0.0, 
+		"max":0.225
+	},
+	"estimatedReturn":
+	{
+		"min":0.08501, 
+		"max":0.2
+	},
+	"incomeRange":[5, 6], "incomeRangeComments":["prosper.Between75kAnd100k", "prosper.Over100k"],
+	"limit":20,
+	"daysFromCurrentTime":2,
+	"listingStatus":[2], "listingStatusComments":["prosper.ListingActive"],
+	"listingTerm":[60], "listingTermComments":["prosper.ListingTerm60Months"],
+	"offset":0,
+	"rating":["C"], "ratingComments":["prosper.RatingC"]
+}
