@@ -25,6 +25,7 @@ type ProsperAndTwilioCreds struct {
 }
 
 type Filter struct {
+	DescPrefix		string `json:"descPrefix"`
     ShortDesc		string `json:"shortDesc"`
     LongDesc		string `json:"LongDesc"`
 	DtiWprosperLoan	interval.Float64Range `json:"dtiWprosperLoan"`
@@ -183,7 +184,6 @@ func main() {
 			ListingStartDate: 	interval.NewTimeRange(time.Now().AddDate(0, 0, int(-1*currFilter.DaysFromCurrentTime)), time.Now()),
 			ListingStatus: 		inputListingStatus,
 			DtiWprosperLoan: 	currFilter.DtiWprosperLoan,
-			EstimatedReturn: 	currFilter.EstimatedReturn,
 			IncomeRange:		inputIncomeRange,
 			ListingTerm:		inputListingTerm,
   		},
@@ -220,12 +220,12 @@ func main() {
 	}
 	
 	if len(listingNumbers) > 0 {
-		smsTheList(creds, listingNumbers, currFilter.ShortDesc, smsFromPhoneNumber, "+12488826908")
+		smsTheList(creds, listingNumbers, currFilter.DescPrefix, currFilter.ShortDesc, smsFromPhoneNumber, "+12488826908")
 	}
 }
 
 //function uses Twilio API to send text messages on loans found
-func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, shortDesc string, fromPhoneNum string, toPhoneNum string) {
+func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, descPrefix string, shortDesc string, fromPhoneNum string, toPhoneNum string) {
 	var sid = creds.TwilioSid //"AC64622019f2045f0b247532ad3f6ebec9" //TEST SID "AC8b8fc89502dbb2d270c6789706ab0af1"
 	var token = creds.TwilioToken //"b8aa10357d28be34489b203d41694259" //TEST TOKEN "15ac6fc7f43c15626ed229a46cc2a3c6"
 	var fromPhoneNumInput = fromPhoneNum //"+12483284008"//TEST FROM PHONENUM "+15005550006"
@@ -234,7 +234,7 @@ func smsTheList(creds ProsperAndTwilioCreds, listingNumbers []string, shortDesc 
 		shortDescVar = shortDesc[0:shortDescMaxLen] + "..." /*Golang doesnt have substring. Instead I designate string as an array and use slicing (I slice shortDesc to only extract chars from position to 0 to 50)*/
 	}
 	
-	var mesg string = "NeoTrade-Microloans: Loans(" + strings.Join(listingNumbers,", ") + "), Filter(" + shortDescVar + ")"
+	var mesg string = descPrefix + strings.Join(listingNumbers,", ") + "), Filter(" + shortDescVar + ")"
 	
 	// Send sms message
 	twilioClient := gotwilio.NewTwilioClient(sid, token)
