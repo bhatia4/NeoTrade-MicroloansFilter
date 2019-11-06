@@ -9,7 +9,7 @@
 	},
 	"incomeRange":[5, 6], "incomeRangeComments":["prosper.Between75kAnd100k", "prosper.Over100k"],
 	"limit":20,
-	"daysFromCurrentTime":1,
+	"daysFromCurrentTime":5,
 	"listingStatus":[2], "listingStatusComments":["prosper.ListingActive"],
 	"listingTerm":[60], "listingTermComments":["prosper.ListingTerm60Months"],
 	"offset":0,
