@@ -1,1 +1,2 @@
-src/prosper_marketplace/creds/creds*
+src/prosper_marketplace/creds/creds.json
+bin/
